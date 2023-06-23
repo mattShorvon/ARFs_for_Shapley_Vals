@@ -1,4 +1,3 @@
-
 # compared to 4: eliminated another for loop and used ifelse once more, uses fifelse line 21.
 prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , ...) {
   # start_t = Sys.time()

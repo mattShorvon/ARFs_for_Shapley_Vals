@@ -51,7 +51,6 @@ prediction <- function(dt, prediction_zero, explainer) {
   stopifnot(nrow(explainer$x_test) == dt[, max(id)])
 
   # View(dt, "dt line 53 prediction.R")
-  write.csv(dt, file = "shaprcoalitions.csv")
   # Reducing the prediction data.table
   max_id_combination <- nrow(explainer$S)
   V1 <- keep <- NULL # due to NSE notes in R CMD check

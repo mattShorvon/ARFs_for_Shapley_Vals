@@ -42,8 +42,8 @@ No_tot_var <- No_cont_var + No_cat_var
 Sigma_diag <- 1
 corr <- 0.5
 mu <- rep(0, No_tot_var)
-No_train_obs <- 1000
-No_test_obs <- 500
+No_train_obs <- 100
+No_test_obs <- 50
 Sigma <- matrix(corr, No_tot_var, No_tot_var)
 diag(Sigma) <- Sigma_diag
 seed <- 123

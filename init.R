@@ -33,6 +33,7 @@ sourceCpp("shapr_original/src/distance.cpp")
 sourceCpp("shapr_original/src/features.cpp")
 sourceCpp("shapr_original/src/impute_data.cpp")
 sourceCpp("shapr_original/src/weighted_matrix.cpp")
+# may throw warning messages, but they don't seem to affect things
 
 # creating synthetic train and test datasets:
 No_cont_var <- 2

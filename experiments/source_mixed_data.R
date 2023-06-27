@@ -147,18 +147,18 @@ compute_shapley_mixed_data <- function(parameters_list){
   No_cont_var <- parameters_list$No_cont_var
   No_cat_var <- parameters_list$No_cat_var
   No_levels <- parameters_list$No_levels
+  No_cores <- parameters_list$No_mc_cores
   #
   No_tot_var <- No_cont_var + No_cat_var
   #
   Sigma_diag <- parameters_list$Sigma_diag
   corr <- parameters_list$corr
   mu <- rep(0, No_tot_var)
-  beta_0 <- 1
-  beta_cont <- c(1, -1)
+  beta_0 <- parameters_list$beta_0
+  beta_cont <- parameters_list$beta_cont
+  beta_cat <- parameters_list$beta_cat
   # beta_cat <- c(1, 0, -1,
   #               2, 3, -1)
-  beta_cat <- c(1, 0, -1, 0.5,
-                2, 3, -1, -0.5)
 
   beta <- c(beta_0, beta_cont, beta_cat)
   #
@@ -406,7 +406,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   algorithm <- mvtnorm::Miwa()
 
   start <- proc.time()
-  mc.cores <- 1
+  mc.cores <- No_cores
   for (i in 2:(nrow(S)-1)){
     S_i <-   which(as.logical(S[i,]))
     Sbar_i <-   which(as.logical(1-S[i,]))

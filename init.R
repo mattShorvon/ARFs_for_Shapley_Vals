@@ -95,7 +95,7 @@ cl <- makeCluster(no_cores)
 registerDoParallel(cl)
 arf <- adversarial_rf(x_train, num_trees = 100)
 psi <- forde(arf, x_train)
-arf_shaps <- explain(x_test,explainer = explainer, approach = "arf", prediction_zero = mean(y_train), psi = psi)
+arf_shaps <- explain(x_test,explainer = explainer, approach = "arf", prediction_zero = mean(y_train$response), psi = psi)
 
 
 

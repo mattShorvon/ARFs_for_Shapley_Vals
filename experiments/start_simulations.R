@@ -1,5 +1,5 @@
 
-# library(shapr) if you want to use arf, have to use the local version.
+# make sure environment is initialised properly with functions from init.R
 library(data.table)
 library(MASS)
 library(ggplot2)
@@ -8,39 +8,8 @@ library(party)
 library(partykit)
 library(doParallel)
 
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-ctree_paper/inst/paper_simulations/3-calculate_true_shapley_withdatatable.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-ctree_paper/inst/paper_simulations/source_mixed_data.R")
-
-source("C:/Users/mshor/OneDrive - King's College London/PhD/shapr-ctree_paper/inst/paper_simulations/3-calculate_true_shapley_withdatatable.R")
-source("C:/Users/mshor/OneDrive - King's College London/PhD/shapr-ctree_paper/inst/paper_simulations/source_mixed_data.R")
-
-source("C:/Users/mshor/OneDrive - King's College London/PhD/shapr-master/Notes/FinalMAP.R")
-
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/Notes/VectorisedMAP5.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/explanation.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/features.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/models.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/observations.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/plot.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/predictions.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/preprocess_data.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/RcppExports.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/sampling.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/shapley.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/transformation.R")
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/R/utils.R")
-
-
-library(Rcpp)
-library(RcppArmadillo)
-library(RcppEigen)
-setwd("C:/Users/mshor/OneDrive - King's College London/PhD/shapr-master/src")
-setwd("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-master/src")
-sourceCpp('AICc.cpp')
-sourceCpp('distance.cpp')
-sourceCpp('features.cpp')
-sourceCpp('impute_data.cpp')
-sourceCpp('weighted_matrix.cpp')
+source("experiments/3-calculate_true_shapley_withdatatable.R")
+source("experiments/source_mixed_data.R")
 
 ## Start simulation study
 tod_date0 <- format(Sys.Date(), "%d_%m_%y")
@@ -54,8 +23,7 @@ set.seed(clock_seed)
 rand_string <- stringi::stri_rand_strings(1,5)
 folder <- paste0(tod_date0, "_", rand_string, "_dim", dim, "_nbcat", no_categories)
 
-dir.create(paste("C:/Users/w21113599/OneDrive - King's College London/PhD/ShapleyValExptData/", folder, sep = ""))
-dir.create(paste("C:/Users/mshor/OneDrive - King's College London/PhD/ShapleyValExptData/", folder, sep = ""))
+dir.create(paste("experiments/experiment_data", folder, sep = ""))
 
 ##
 
@@ -72,15 +40,20 @@ for(j in corr){
                           No_sample_gaussian = c(10),
                           No_cont_var = 2,
                           No_cat_var = 2,
-                          No_levels = 4,
+                          No_levels = 8,
                           Sigma_diag = 1,
                           corr = j,
                           No_train_obs = 1000,
                           No_test_obs = 500,
-                          cat_cutoff = c(-200, -0.5, 0, 1, 200),
+                          cat_cutoff = c(-200, -100, -50, -0.5, 0, 1, 50, 100, 200),
                           noise = FALSE,
                           name = 'testing',
-                          seed = 123)
+                          seed = 123,
+                          No_mc_cores = 1,
+                          beta_0 = 1,
+                          beta_cont = c(1, -1),
+                          beta_cat = c(1, 0, -1, 0.5, 2, 3, -1, 1.5,
+                                        2, 3, -1, -0.5, 2, 3, -1, 1.5))
   k <- k + 1
 }
 # parameters_list <- parameters_list[[1]] # this is for working out what the code does
@@ -138,7 +111,8 @@ for (i in 1:no_experiments) {
                                  cat_cutoff = c(-200, -0.5, 0, 1, 200),
                                  noise = TRUE,
                                  name = 'testing',
-                                 seed = clock_seed)
+                                 seed = clock_seed,
+                                 No_mc_cores = 1)
     k <- k + 1
   }
   all_methods <- list()
@@ -187,7 +161,8 @@ for (i in 1:no_experiments) {
                                  cat_cutoff = c(-200, -0.5, 0, 1, 200),
                                  noise = TRUE,
                                  name = 'testing',
-                                 seed = clock_seed)
+                                 seed = clock_seed,
+                                 No_mc_cores = 1)
     k <- k + 1
   }
   all_methods <- list()

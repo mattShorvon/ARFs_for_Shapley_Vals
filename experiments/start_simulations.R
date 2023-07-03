@@ -77,14 +77,14 @@ for(i in 1:length(parameters_list)){
 # running several experiments to get error bars:
 
 # doing continuous and categorical features:
-source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-ctree_paper/inst/paper_simulations/source_mixed_data.R")
-
-no_experiments <- 10
+source("experiments/source_mixed_data.R")
+dir.create("experiments/experiment_data/dim4_nbcat2cont2_n1000/")
+no_experiments <- 5
 for (i in 1:no_experiments) {
   tod_date0 <- format(Sys.Date(), "%d_%m_%y")
 
   dim <- 4
-  no_categories <- 4
+  no_categories <- 8
 
   clock_seed_0 <- round(as.numeric(Sys.time()) * 1000)
   clock_seed <- signif(clock_seed_0) - clock_seed_0
@@ -92,7 +92,7 @@ for (i in 1:no_experiments) {
   rand_string <- stringi::stri_rand_strings(1,5)
   folder <- paste0(tod_date0, "_", rand_string, "_dim", dim, "_nbcat2cont2_n1000_", no_categories)
 
-  dir.create(paste("C:/Users/w21113599/OneDrive - King's College London/PhD/ShapleyValExptData/dim4_nbcat2cont2_n1000/", folder, sep = ""))
+  dir.create(paste("experiments/experiment_data/dim4_nbcat2cont2_n1000/", folder, sep = ""))
 
   parameters_list <- list()
 
@@ -103,16 +103,20 @@ for (i in 1:no_experiments) {
                                  No_sample_gaussian = c(10),
                                  No_cont_var = 2,
                                  No_cat_var = 2,
-                                 No_levels = 4,
+                                 No_levels = 8,
                                  Sigma_diag = 1,
                                  corr = j,
                                  No_train_obs = 1000,
                                  No_test_obs = 500,
-                                 cat_cutoff = c(-200, -0.5, 0, 1, 200),
-                                 noise = TRUE,
+                                 cat_cutoff = c(-200, -2, -1, -0.5, 0, 0.5, 1, 2, 200),
+                                 noise = FALSE,
                                  name = 'testing',
                                  seed = clock_seed,
-                                 No_mc_cores = 1)
+                                 No_mc_cores = 1,
+                                 beta_0 = 1,
+                                 beta_cont = c(1, -1),
+                                 beta_cat = c(1, 0, -1, 0.5, 2, 3, -1, 1.5,
+                                              2, 3, -1, -0.5, 2, 3, -1, 1.5))
     k <- k + 1
   }
   all_methods <- list()
@@ -121,7 +125,7 @@ for (i in 1:no_experiments) {
 
     nm = paste(folder, '_rho_', parameters_list[[i]]$corr, ".rds", sep = "")
 
-    saveRDS(all_methods, file = paste("C:/Users/w21113599/OneDrive - King's College London/PhD/ShapleyValExptData/dim4_nbcat2cont2_n1000", folder, nm, sep = "/"))
+    saveRDS(all_methods, file = paste("experiments/experiment_data/dim4_nbcat2cont2_n1000", folder, nm, sep = "/"))
   }
 }
 

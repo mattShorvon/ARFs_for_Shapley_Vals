@@ -49,7 +49,7 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
   dt[row_id %in% to_eval,] <- foreach(i = 1:length(to_eval), .combine = rbind,
                                       .packages = "data.table", .export = "prep") %dopar%
     {prep(dt[row_id == to_eval[i],], psi)
-  }
+    }
   dt[is.na(value) & type == "cnt" & !is.na(cvg_sum), value := mu_cvg_sum/cvg_sum]
   dt[, type := NULL]
   dt <- dcast(dt, row_id + id + id_combination ~ variable, value.var = "value")
@@ -104,7 +104,7 @@ prep <- function(coalition, psi) {
       {leafIDs[[i]] <- psi$cat[variable == coal[i, variable]
                                & val == coal[i, value]
                                & prob > 0, f_idx]}
-      )
+    )
   }
   leaves <- Reduce(intersect, leafIDs)
   if (length(leaves) == 0) {

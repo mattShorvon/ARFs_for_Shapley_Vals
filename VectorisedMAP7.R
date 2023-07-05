@@ -90,12 +90,15 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
 #'
 prep <- function(coalition, psi) {
   # get table of p(th | x) values where x is the set of observed features in the coalition
+  # start_t <- Sys.time()
   leaves_info <- leaf_posterior_shapley(params = psi, coalition = coalition)
   leaves_info <- unique(leaves_info[, .(f_idx, p_th_given_x)])
+  # print(Sys.time() - start_t)
 
   # loop through unobserved features, add column of mu's to p(th | x) table,
   # do an element-wise multiplication between these two columns, sum the resulting
   # column to get the MAP.
+  # start_t <- Sys.time()
   unobserved <- coalition[is.na(value)]
   for (i in 1:nrow(coalition[is.na(value)])) {
   coal <- unobserved[i]
@@ -114,7 +117,7 @@ prep <- function(coalition, psi) {
       coalition[variable == var, value := leaves_info_cat[which.max(total), val]]
     }
   }
-
+  # print(Sys.time() - start_t)
   return(coalition)
 }
 

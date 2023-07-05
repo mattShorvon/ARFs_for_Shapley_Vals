@@ -6,25 +6,22 @@ library(rapportools) # for testing booleans
 library(ggplot2)
 library(stringr)
 
-source("C:/Users/mshor/OneDrive - King's College London/PhD/shapr-ctree_paper/inst/paper_simulations/3-calculate_true_shapley_withdatatable.R")
+source("C:/Users/mshor/OneDrive - King's College London/PhD/ARFs_for_Shapley_Vals/experiments/3-calculate_true_shapley_withdatatable.R")
 source("C:/Users/w21113599/OneDrive - King's College London/PhD/shapr-ctree_paper/inst/paper_simulations/3-calculate_true_shapley_withdatatable.R")
 
 
-tod_date <- "03_06_23"
-rand_string <- "DcB48"
+tod_date <- "04_07_23"
+rand_string <- "5U05Z"
 dim <- 4
 no_categories <- 4
 
-folder <- paste0(tod_date, "_", rand_string, "_dim", dim, "_nbcat", no_categories)
+folder <- paste0(tod_date, "_", rand_string, "_dim", dim, "_nbcat2cont2_n1000_", no_categories)
 
 ##
 
 ## load data
-nm <- paste0(tod_date, "_", rand_string, "_dim", dim, "_nbcat", no_categories, "_rho_0.9.rds")
-all_methods <- readRDS(paste("C:/Users/mshor/OneDrive - King's College London/PhD/ShapleyValExptData", folder, nm, sep = "/"))
-all_methods <- readRDS(paste("C:/Users/w21113599/OneDrive - King's College London/PhD/ShapleyValExptData", folder, nm, sep = "/"))
-
-all_methods <- readRDS(paste("C:/Users/w21113599/OneDrive - King's College London/PhD/ShapleyValExptData/dim4_nbcat4_n1000", folder, nm, sep = "/"))
+nm <- paste0(tod_date, "_", rand_string, "_dim", dim, "_nbcat2cont2_n1000_", no_categories, "_rho_0.9.rds")
+all_methods <- readRDS(paste("C:/Users/mshor/OneDrive - King's College London/PhD/ARFs_for_Shapley_Vals/experiments/experiment_data/dim4_nbcat2cont2_n1000", folder, nm, sep = "/"))
 
 
 ## for gaussian stuff
@@ -132,7 +129,7 @@ ggsave(paste("C:/Users/w21113599/OneDrive - King's College London/PhD/ShapleyVal
        scale = 1, width = 45, height = 30, units = "cm",
        dpi = 300, limitsize = TRUE)
 
-ggsave(paste("C:/Users/w21113599/OneDrive - King's College London/PhD/ShapleyValExptData/dim4_nbcat4_n1000", folder, img, sep = "/"), plot = p1, device = NULL, path = NULL,
+ggsave(paste("C:/Users/mshor/OneDrive - King's College London/PhD/ARFs_for_Shapley_Vals/experiments/experiment_data/dim4_nbcat2cont2_n1000", folder, img, sep = "/"), plot = p1, device = NULL, path = NULL,
        scale = 1, width = 45, height = 30, units = "cm",
        dpi = 300, limitsize = TRUE)
 

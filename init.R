@@ -23,7 +23,7 @@ source("shapr_original/R/transformation.R")
 source("shapr_original/R/utils.R")
 
 # load the new ARF functions:
-source("VectorisedMAP5.R")
+source("VectorisedMAP7.R")
 
 # load the c++ functions
 library(Rcpp)
@@ -98,7 +98,8 @@ psi <- forde(arf, x_train)
 arf_shaps <- explain(x_test,explainer = explainer, approach = "arf", prediction_zero = mean(y_train$response), psi = psi)
 
 
-
+# may be useful in some testing scenarios:
+explainer$x_test <- x_test
 
 
 

@@ -2,10 +2,15 @@
 
 # Load libraries
 library(data.table)
-library(arf)
 library(palmerpenguins)
-library(doMC)
-registerDoMC(8)
+library(doParallel)
+library(devtools)
+install_github("bips-hb/arf@tweaks")
+library(arf)
+
+no_cores <- detectCores() - 2
+cl <- makeCluster(no_cores)
+registerDoParallel(cl)
 
 # Set seed
 set.seed(123)
@@ -80,7 +85,7 @@ wrap_fn <- function(i) {
   bitv <- as.logical(o[i, ])
   if (all(bitv)) {
     # Impute nothing
-    out <- sample_i
+    out <- sample_i # just return the original sample/coalition
   } else {
     if (all(!bitv)) {
       # Impute everything
@@ -108,6 +113,12 @@ out <- foreach(idx = seq_len(2^d), .combine = rbind) %do% wrap_fn(idx)
 library(microbenchmark)
 microbenchmark(
   'tst' = foreach(idx = seq_len(2^d), .combine = rbind) %do% wrap_fn(idx),
+  times = 10L
+)
+
+# with parallelization
+microbenchmark(
+  'tst' = foreach(idx = seq_len(2^d), .combine = rbind, .packages = "data.table") %dopar% wrap_fn(idx),
   times = 10L
 )
 

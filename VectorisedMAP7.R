@@ -25,7 +25,7 @@
 #' @return A `data.table` containing filled coalition data, passed to
 #' \code{\link{prediction}} in the prepare_and_predict() function.
 prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , ...) {
-  print("Using vectorised version")
+  print("Using vectorised version with method for calculating the leaf posteriors")
   dt <- data.table(x$x_test)
   dt[,id := .I]
   dt <- dt[rep(seq_len(nrow(x$x_test)), each = 2^ncol(x$x_test))]
@@ -45,7 +45,7 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
   dt[, row_id := .GRP, by = c("id", "id_combination")]
   to_eval <- unique(dt[id_combination != 1 & id_combination != 2^ncol(x$x_test), row_id])
   dt[row_id %in% to_eval,] <- foreach(i = 1:length(to_eval), .combine = rbind,
-                                      .packages = "data.table", .export = "prep") %dopar%
+                                      .packages = "data.table", .export = c("prep","leaf_posterior_shapley")) %dopar%
     {prep(dt[row_id == to_eval[i],], psi)
     }
   dt[, type := NULL]
@@ -59,6 +59,7 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
   }
   dt[, w := 1]
   dt[, row_id := NULL]
+  View(dt)
   return(dt)
 }
 

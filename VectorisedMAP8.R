@@ -31,8 +31,11 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
   print("Using vectorised version with new MAP method")
   dt <- data.table(x$x_test)
   dt[,id := .I]
-  dt_out <- foreach(i = 1:seq_len(nrow(x$x_test)),.combine = rbind) %do% map_wrap1(point_to_explain = dt[id == i],
+  dt_out <- foreach(i = seq_len(nrow(x$x_test)),.combine = rbind) %do% map_wrap1(point_to_explain = dt[id == i],
                                                                                psi = psi)
+  dt_out[, id := rep(seq_along(1:nrow(x$x_test)), each = 2^ncol(x$x_test))]
+  dt_out[, id_combination := rep(seq_along(1:2^ncol(x$x_test)),nrow(x$x_test))]
+  dt_out[, w := 1]
   return(dt_out)
 }
 
@@ -93,11 +96,18 @@ map_wrap1 <- function(point_to_explain, psi = psi) {
   colnames(o) <- psi$meta$variable
   
   # Call map_wrap2 to obtain table of coalitions with filled (imputed) values
-  out1 <- foreach(idx = seq_len(2^d), .combine = rbind) %do% map_wrap2(i = idx, 
+  out1 <- foreach(idx = seq_len(2^d), .combine = rbind) %do% map_wrap2(i = idx,
                                                                        o = o,
                                                                        psi = psi,
                                                                        point_to_explain = point_to_explain,
                                                                        psi_x = psi_x)
+  # 
+  # for (idx in 1:seq_len(2^d)) {
+  #   print(idx)
+  #   out1 <- map_wrap2(i = idx, o = o, psi = psi, point_to_explain = point_to_explain, psi_x = psi_x)
+  # }
+  browser()
+  out1[, id := ]
   return(out1)
 }
 

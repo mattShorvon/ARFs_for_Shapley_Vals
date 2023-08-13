@@ -36,7 +36,7 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
   dt <- as.data.table(coal)
   colnames(dt) <- x$feature_list$labels
   dt[, id := rep(seq_along(1:nrow(x$x_test)), each = 2^ncol(x$x_test))]
-  dt[,id_combination := rep(seq_along(1:2^ncol(x$x_test)),nrow(x$x_test))]
+  dt[, id_combination := rep(seq_along(1:2^ncol(x$x_test)),nrow(x$x_test))]
   dt <- melt(dt, id.vars = c("id", "id_combination"))
   dt <- dt[order(id, id_combination)]
   var_names_cnt = psi[["cnt"]][, unique(variable)]

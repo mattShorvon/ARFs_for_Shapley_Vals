@@ -36,6 +36,13 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
   dt_out[, id := rep(seq_along(1:nrow(x$x_test)), each = 2^ncol(x$x_test))]
   dt_out[, id_combination := rep(seq_along(1:2^ncol(x$x_test)),nrow(x$x_test))]
   dt_out[, w := 1]
+  for (column in x$feature_list$labels) {
+    col_class <- x$feature_list$classes[column]
+    dt_out[, (column) := switch(col_class,
+                            numeric = as.numeric(get(column)),
+                            character = as.character(get(column)),
+                            factor = as.factor(get(column)))]
+  }
   return(dt_out)
 }
 
@@ -106,8 +113,6 @@ map_wrap1 <- function(point_to_explain, psi = psi) {
   #   print(idx)
   #   out1 <- map_wrap2(i = idx, o = o, psi = psi, point_to_explain = point_to_explain, psi_x = psi_x)
   # }
-  browser()
-  out1[, id := ]
   return(out1)
 }
 

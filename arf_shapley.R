@@ -118,7 +118,8 @@ microbenchmark(
 
 # with parallelization
 microbenchmark(
-  'tst' = foreach(idx = seq_len(2^d), .combine = rbind, .packages = "data.table") %dopar% wrap_fn(idx),
+  'parallel' = foreach(idx = seq_len(2^d), .combine = rbind, .packages = "data.table") %dopar% wrap_fn(idx),
+  'serial' = foreach(idx = seq_len(2^d), .combine = rbind, .packages = "data.table") %do% wrap_fn(idx),
   times = 10L
 )
 

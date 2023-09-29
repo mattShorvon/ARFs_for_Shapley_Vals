@@ -31,7 +31,7 @@ prepare_data.arf <- function(x = explainer, index_features = NULL, psi = psi , .
   print("Using vectorised version with new MAP method")
   dt <- data.table(x$x_test)
   dt[,id := .I]
-  dt_out <- foreach(i = seq_len(nrow(x$x_test)),.combine = rbind) %do% map_wrap1(point_to_explain = dt[id == i],
+  dt_out <- foreach(i = seq_len(nrow(x$x_test)),.combine = rbind) %dopar% map_wrap1(point_to_explain = dt[id == i],
                                                                                psi = psi)
   dt_out[, id := rep(seq_along(1:nrow(x$x_test)), each = 2^ncol(x$x_test))]
   dt_out[, id_combination := rep(seq_along(1:2^ncol(x$x_test)),nrow(x$x_test))]
@@ -50,7 +50,6 @@ map_wrap1 <- function(point_to_explain, psi = psi) {
   # Precompute all marginal likelihoods
   psi_cnt <- psi_cat <- NULL
   point_to_explain[, id := NULL]
-  print(point_to_explain)
   factor_cols <- psi$meta[, family == 'multinom']
   cont_cols <- psi$meta[, family != 'multinom']
   # Continuous case

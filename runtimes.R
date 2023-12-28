@@ -10,4 +10,9 @@ microbenchmark(
 )
 # ~80s for MAP, ~90s for Sampling. 
 
-arf_shaps <- explain(x_test,explainer = explainer, approach = "arf_sampling", prediction_zero = mean(y_train$response), psi = psi)
+arf_shaps <- explain(x_test,
+                     explainer = explainer, 
+                     approach = "arf_sampling", 
+                     prediction_zero = mean(y_train$response), 
+                     n_samples = 1000,
+                     psi = psi)

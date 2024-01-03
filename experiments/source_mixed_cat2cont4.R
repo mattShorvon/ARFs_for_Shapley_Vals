@@ -396,6 +396,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   Vs_mat[nrow(S),] <- predict(model, x_test)
   
   algorithm <- mvtnorm::GenzBretz() # Not exact and slower for small dimensions, but required for larger dimension (27/10/23)
+                                    # 02/01/2024 Miwa might cause NaNs to appear in the intval matrix (am testing this)
   # algorithm <- mvtnorm::Miwa()
   
   start <- proc.time()
@@ -454,7 +455,9 @@ compute_shapley_mixed_data <- function(parameters_list){
           for (l in 1:No_levels){
             prob_mat[k,l] <- h * sum(intval_array_no_x[, k, jj][x_int_grid_cat == l])
           }
-          prob_mat[k,] <- prob_mat[k, ] / sum(prob_mat[k, ])
+          if (sum(prob_mat[k,]) != 0) { # 01/01/24 wrapping this in this if statement seems to stop the NaNs in prob_mat
+            prob_mat[k,] <- prob_mat[k, ] / sum(prob_mat[k, ])
+          }
         }
         Vs_sum_contrib_vec <- as.vector(beta_list[[j]] %*% t(prob_mat))
         
@@ -478,7 +481,6 @@ compute_shapley_mixed_data <- function(parameters_list){
   for (i in 1:No_test_obs){
     exactShap[i,] <- c(explainer$W %*% Vs_mat[, i])
   }
-  print(exactShap[1:25,])
   # max(abs(rowSums(exactShap) - predict(model, x_test))) #
   
   ## Estimating the Shapley values

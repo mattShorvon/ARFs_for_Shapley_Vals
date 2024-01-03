@@ -401,6 +401,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   
   start <- proc.time()
   mc.cores <- 1 # need to change to no. of cores you are using on create, or set to 1 if on windows laptop
+  
   for (i in 2:(nrow(S)-1)){
     S_i <-   which(as.logical(S[i,]))
     Sbar_i <-   which(as.logical(1-S[i,]))

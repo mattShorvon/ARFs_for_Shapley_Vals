@@ -24,6 +24,7 @@ source("shapr_original/R/utils.R")
 
 # load the new ARF functions:
 source("VectorisedMAP7.R")
+source("arf_shap_sampling.R")
 
 # load the c++ functions
 library(Rcpp)

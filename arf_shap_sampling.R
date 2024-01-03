@@ -27,7 +27,7 @@ prepare_data.arf_sampling <- function(x = explainer, index_features = NULL, psi 
   dt <- dt[order(id, id_combination)]
   dt[, row_id := .GRP, by = c("id", "id_combination")]
   full_coals <- dt[id_combination == 2^ncol(x$x_test),]
-  dt_out <- foreach(i = seq_len(nrow(x$x_test)*2^ncol(x$x_test)), .combine = rbind) %dopar% 
+  dt_out <- foreach(i = seq_len(nrow(x$x_test)*2^ncol(x$x_test)), .combine = rbind, .export="forge_wrapper", .packages=c("data.table","arf")) %dopar% 
     forge_wrapper(params = psi, n_synth = x$n_samples, datapoint = dt[row_id == i, ],full_coals = full_coals)
   dt_out[, w := 1/x$n_samples]
   for (column in x$feature_list$labels) {

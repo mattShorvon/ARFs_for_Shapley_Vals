@@ -114,7 +114,7 @@ listfun <- function(mean_above,left,x_val,...){
   list(mean_above = mean_above,left = left,x_val = x_val,...)
 }
 
-compute_dens_x_given_S_is_C_func_v2 <- function(ret_list,algorithm = mvtnorm::Miwa()) {
+compute_dens_x_given_S_is_C_func_v2 <- function(ret_list,algorithm = mvtnorm::GenzBretz()) {
   
   above <- mvtnorm::pmvnorm(lower = ret_list$C_lower,upper = ret_list$C_upper,
                             mean = ret_list$mean_above,
@@ -247,7 +247,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   
   ## Calculate response
   dt[, response := response_mod(mod_matrix_full = cbind(1, mod_matrix), beta = beta, epsilon = epsilon)]
-  dt_numeric[, response := dt[['response']]] 
+  dt_numeric[, response := dt[['response']]]
   
   ## Fit model - model_onehot is for the one-hot encoded methods
   fmla <- as.formula(paste0("response~", paste(feat_names, collapse = "+")))
@@ -257,7 +257,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   model_onehot <- lm(fmla_onehot, data = dt[(1:No_train_obs)])
   
   ## Initalize shapr object with trained model -- this is used for calculating true shapley
-  x_train <- dt[train_obs, ..feat_names] 
+  x_train <- dt[train_obs, ..feat_names]
   x_test <- dt[test_obs, ..feat_names]
   y_train <- dt[train_obs, .(response)]
   
@@ -270,7 +270,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   x_train_onehot_reduced <- dt[train_obs, ..reduced_onehot_names]
   
   ##
-  explainer <- shapr(x_train, model) # 27/10/23 I think the explainer object looks fine 
+  explainer <- shapr(x_train, model) # 27/10/23 I think the explainer object looks fine
   
   if(any(grepl("empirical", methods)) | any(grepl("gaussian", methods)) | any(grepl("ctree_onehot", methods))){
     explainer_onehot <- shapr(x_train_onehot_reduced, model_onehot)
@@ -301,7 +301,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   model_numeric <- model
   class(model_numeric) <- "numeric_lm"
   explainer_numeric <- shapr(x_train_numeric, model_numeric)
-  ## END      27/10/23 I think normal up to here. 
+  ## END      27/10/23 I think normal up to here.
   
   ## Calculate the true shapley values
   S <- explainer$S
@@ -327,7 +327,7 @@ compute_shapley_mixed_data <- function(parameters_list){
     } else {
       if(S_is_cont){
         case_matrix[i,which(ind_cont_cols_logical &Sbar_i_logical)] <- 1 # what is this doing anyway?
-        case_matrix[i,which(ind_cat_cols_logical &Sbar_i_logical)] <- 4 # why are numbers hard coded like this? 
+        case_matrix[i,which(ind_cat_cols_logical &Sbar_i_logical)] <- 4 # why are numbers hard coded like this?
       }
       if(S_is_cat){
         case_matrix[i,which(ind_cont_cols_logical &Sbar_i_logical)] <- 2
@@ -362,7 +362,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   for(i in (No_cont_var + 1):No_tot_var){
     beta_list[[i]] <- beta_cat[(k-1) * No_levels + (1:No_levels)]
     k <- k + 1
-  } 
+  }
   
   ## Restructuring one_hot test data per feature
   x_test_onehot_full_list <- list()
@@ -396,11 +396,11 @@ compute_shapley_mixed_data <- function(parameters_list){
   Vs_mat[nrow(S),] <- predict(model, x_test)
   
   algorithm <- mvtnorm::GenzBretz() # Not exact and slower for small dimensions, but required for larger dimension (27/10/23)
-                                    # 02/01/2024 Miwa might cause NaNs to appear in the intval matrix (am testing this)
+  # 02/01/2024 Miwa might cause NaNs to appear in the intval matrix (am testing this)
   # algorithm <- mvtnorm::Miwa()
   
   start <- proc.time()
-  mc.cores <- 1 # need to change to no. of cores you are using on create, or set to 1 if on windows laptop
+  mc.cores <- no_cores # need to change to no. of cores you are using on create, or set to 1 if on windows laptop
   for (i in 2:(nrow(S)-1)){
     S_i <-   which(as.logical(S[i,]))
     Sbar_i <-   which(as.logical(1-S[i,]))
@@ -455,7 +455,7 @@ compute_shapley_mixed_data <- function(parameters_list){
           for (l in 1:No_levels){
             prob_mat[k,l] <- h * sum(intval_array_no_x[, k, jj][x_int_grid_cat == l])
           }
-          if (sum(prob_mat[k,]) != 0) { # 01/01/24 wrapping this in this if statement seems to stop the NaNs in prob_mat
+          if (sum(prob_mat[k,]) != 0) { # 01/01/24 wrapping this in this if statement seems to stop the NaNs in prob_mat, sometimes causes an 'true/false val expected' error
             prob_mat[k,] <- prob_mat[k, ] / sum(prob_mat[k, ])
           }
         }
@@ -481,6 +481,7 @@ compute_shapley_mixed_data <- function(parameters_list){
   for (i in 1:No_test_obs){
     exactShap[i,] <- c(explainer$W %*% Vs_mat[, i])
   }
+  print(exactShap[1:50,])
   # max(abs(rowSums(exactShap) - predict(model, x_test))) #
   
   ## Estimating the Shapley values
@@ -676,9 +677,14 @@ compute_shapley_mixed_data <- function(parameters_list){
   return_list[['timing']] <- timeit
   
   return_list[['parameters']] <- parameters_list
+  print(return_list$methods$arf_sampling$dt[1:50,])
+  print("any NAs in arf_sampling:")
+  print(anyNA(return_list$methods$arf_sampling$dt))
   print("--- End ---")
   return(return_list)
 }
+
+
 
 
 
